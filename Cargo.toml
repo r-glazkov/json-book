@@ -1,6 +1,6 @@
 [package]
 name = "json-book"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["Руслан Глазков <glazkov@skiff.com>"]
 description = "Book format optimized for small screens, an alternaive for the XML-based FB2"
 readme = "README.md"
