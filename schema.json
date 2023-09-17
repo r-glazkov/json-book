@@ -1,0 +1,879 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/json-book/0.0.0/schema.json",
+  "title": "Структура книги в формате JSON",
+  "description": "Формат книги наподобие FB2, хранящий содержание без представления",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/Identifier"
+    },
+    "language": {
+      "type": "string",
+      "description": "Идентификатор языка согласно RFC 5646, на котором написана эта книга или на который была переведена"
+    },
+    "short_title": {
+      "type": "string",
+      "description": "Краткое название книги"
+    },
+    "date": {
+      "description": "Дата, когда книга была написана или впервые опубликована (оригинальное, не переведённое и не переизданное произведение)",
+      "$ref": "#/$defs/Date"
+    },
+    "authors": {
+      "description": "Оригинальные авторы произведения (не переводчики и не издатели)",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Author"
+      }
+    },
+    "cover": {
+      "description": "Изображение книги, предпочтительно 6:9, используемое, например, в списке книг читателя, на странице описания произведения, или отображаемое перед чтением",
+      "$ref": "#/$defs/InlineImage"
+    },
+    "annotation": {
+      "description": "Краткое изложение произведения, его описание",
+      "$ref": "#/$defs/Annotation"
+    },
+    "title": {
+      "description": "Заголовок произведения, который отобразиться при чтении произведения",
+      "$ref": "#/$defs/Title"
+    },
+    "epigraphs": {
+      "description": "Фрагмент текста, предшествующий основному содержанию книги. В том числе, предшествующий главам книги.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Epigraph"
+      }
+    },
+    "chapters": {
+      "description": "Главы произведения",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Chapter"
+      }
+    },
+    "notes": {
+      "description": "Примечания",
+      "$ref": "#/$defs/Footnotes"
+    },
+    "comments": {
+      "description": "Комментарии",
+      "$ref": "#/$defs/Footnotes"
+    }
+  },
+  "required": [
+    "authors",
+    "chapters",
+    "date",
+    "id",
+    "short_title"
+  ],
+  "$defs": {
+    "Anchor": {
+      "description": "Неповторимый идентификатор части произведения, на который можно ссылаться",
+      "type": "string"
+    },
+    "Annotation": {
+      "description": "Краткое изложение или описание книги или главы",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AnnotationElement"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "AnnotationElement": {
+      "description": "Допустимая частица аннотации",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphWrapper"
+        },
+        {
+          "$ref": "#/$defs/PoemWrapper"
+        },
+        {
+          "$ref": "#/$defs/CiteWrapper"
+        },
+        {
+          "$ref": "#/$defs/SubtitleWrapper"
+        },
+        {
+          "$ref": "#/$defs/TableWrapper"
+        },
+        {
+          "$ref": "#/$defs/EmptyLine"
+        }
+      ]
+    },
+    "Author": {
+      "description": "Причастный к созданию оригинального произведения человек (не переводчик и не издатель)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Идентификатор, по которому можно лучше познакомиться с автором и, возможно, с другими его произведениями",
+          "$ref": "#/$defs/Identifier"
+        },
+        "full_name": {
+          "description": "Предпочтительное, возможно вымышленное, полное имя автора",
+          "type": "string"
+        },
+        "given_name": {
+          "description": "Данное, обычно родителями, имя автору",
+          "type": "string"
+        },
+        "family_name": {
+          "description": "Наследственное родовое имя автора",
+          "type": "string"
+        },
+        "middle_name": {
+          "description": "Дополнительное имя. Обычно, отчество",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "BaselineShift": {
+      "description": "Позволяет отобразить шрифт в виде нижнего или верхнего индекса. Текст при этом располагается ниже или выше базовой линии остальных символов строки и уменьшенного размера",
+      "type": "string",
+      "enum": [
+        "Subscript",
+        "Superscript"
+      ]
+    },
+    "Chapter": {
+      "description": "Глава книги",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "title": {
+          "description": "Заголовок главы книги",
+          "$ref": "#/$defs/Title"
+        },
+        "annotation": {
+          "description": "Краткое изложение или описание главы книги, предшествующее основному повествованию",
+          "$ref": "#/$defs/Annotation"
+        },
+        "cover": {
+          "description": "Изображение, описывающее главу, отображаемое перед основным повествованием",
+          "$ref": "#/$defs/Image"
+        },
+        "epigraphs": {
+          "description": "Фрагменты текста, помещённые перед началом главы, после её названия",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Epigraph"
+          }
+        },
+        "content": {
+          "description": "Содержание главы из нескольких частей, отличные по структуре или отображению",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Content"
+          }
+        },
+        "sub_chapters": {
+          "description": "Подразделы главы",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Chapter"
+          }
+        }
+      },
+      "required": [
+        "sub_chapters",
+        "content"
+      ]
+    },
+    "Cite": {
+      "description": "Цитата",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "authors": {
+          "description": "Авторы цитаты",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Paragraph"
+          }
+        },
+        "content": {
+          "description": "Составные части цитаты",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CiteElement"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "CiteElement": {
+      "description": "Допустимая частица цитаты",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphWrapper"
+        },
+        {
+          "$ref": "#/$defs/PoemWrapper"
+        },
+        {
+          "$ref": "#/$defs/SubtitleWrapper"
+        },
+        {
+          "$ref": "#/$defs/TableWrapper"
+        },
+        {
+          "$ref": "#/$defs/EmptyLine"
+        }
+      ]
+    },
+    "CiteWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Cite": {
+          "$ref": "#/$defs/Cite"
+        }
+      },
+      "required": ["Cite"]
+    },
+    "Content": {
+      "description": "Допустимая частица содержание верхнего уровня главы, примечаний, комментариев...",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphWrapper"
+        },
+        {
+          "$ref": "#/$defs/PoemWrapper"
+        },
+        {
+          "$ref": "#/$defs/SubtitleWrapper"
+        },
+        {
+          "$ref": "#/$defs/CiteWrapper"
+        },
+        {
+          "$ref": "#/$defs/TableWrapper"
+        },
+        {
+          "$ref": "#/$defs/ImageWrapper"
+        },
+        {
+          "$ref": "#/$defs/EmptyLine"
+        }
+      ]
+    },
+    "Date": {
+      "description": "Дата в различных форматах",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "iso_date": {
+          "description": "ISO 8601 дата, понимаемая программами",
+          "type": "string",
+          "format": "date"
+        },
+        "display_date": {
+          "description": "Дата в любом виде, которую предпочтительнее отобразить читателю",
+          "type": "string"
+        }
+      }
+    },
+    "EmptyLine": {
+      "description": "Пустая строка",
+      "const": "EmptyLine"
+    },
+    "Epigraph": {
+      "description": "Фрагмент текста, помещённый перед началом произведения или его части (после названия) и отделённый от основного текста графически и структурно",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "authors": {
+          "description": "Автор текста в эпиграфе",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Paragraph"
+          }
+        },
+        "content": {
+          "description": "Содержание эпиграфа в нескольких частях отличных по структуре или отображению",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EpigraphElement"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "EpigraphElement": {
+      "description": "Допустимые частицы эпиграфа",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphWrapper"
+        },
+        {
+          "$ref": "#/$defs/PoemWrapper"
+        },
+        {
+          "$ref": "#/$defs/CiteWrapper"
+        },
+        {
+          "$ref": "#/$defs/EmptyLine"
+        }
+      ]
+    },
+    "FontStyle": {
+      "description": "Оформление текста, позволяющее отобразить текст определённым нетипичным образом",
+      "enum": [
+        "Italic",
+        "Code"
+      ]
+    },
+    "Footnote": {
+      "description": "Сноски текста",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "Золовок сноски, обычно содержащий её порядковый номер",
+          "$ref": "#/$defs/Title"
+        },
+        "content": {
+          "description": "Содержание сноски из несколько частиц",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Content"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "FootnoteLink": {
+      "description": "Ссылка на сноску в книге",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Идентификатор сноски, на который этот элемент ссылается",
+          "type": "string"
+        },
+        "type": {
+          "description": "Вид сноски, на которую этот элемент ссылается",
+          "$ref": "#/$defs/FootnoteType"
+        },
+        "content": {
+          "description": "Содержание сноски из нескольких частиц",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Text"
+          }
+        }
+      },
+      "required": ["id", "type", "content"]
+    },
+    "FootnoteLinkWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Footnote": {
+          "$ref": "#/$defs/FootnoteLink"
+        }
+      },
+      "required": ["Footnote"]
+    },
+    "FootnoteType": {
+      "description": "Вид сноски",
+      "type": "string",
+      "enum": ["Note", "Comment"]
+    },
+    "Footnotes": {
+      "description": "Сноски",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "Заголовок части книги со сносками, обычно имеющий простые значения вроде \"Примечания\" или \"Комментарии\"",
+          "$ref": "#/$defs/Title"
+        },
+        "content": {
+          "description": "Сноски по неповторимому строковому идентификатору",
+          "additionalProperties": {
+            "$ref": "#/$defs/Footnote"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "Href": {
+      "description": "Ссылка на внешний источник либо на часть книги",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RemoteHref"
+        },
+        {
+          "$ref": "#/$defs/LocalHref"
+        }
+      ]
+    },
+    "Identifier": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Идентификатор данных в определённом хранилище"
+    },
+    "Image": {
+      "description": "Изображение, которое может озаглавливать главу или отдельную её часть, не может находиться внутри текста",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "alt": {
+          "description": "Описание изображения, которое покажется в случае невозможности отображения самого изображения",
+          "type": "string"
+        },
+        "title": {
+          "description": "Краткое описание изображения, которая будет отображено рядом с ним самим",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "ImageWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Image": {
+          "$ref": "#/$defs/Image"
+        }
+      },
+      "required": ["Image"]
+    },
+    "InlineImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "alt": {
+          "description": "Описание изображения, которое покажется в случае невозможности отображения самого изображения",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "InlineImageWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Image": {
+          "$ref": "#/$defs/InlineImage"
+        }
+      },
+      "required": ["Image"]
+    },
+    "Link": {
+      "description": "Ссылка на другую часть книги либо на внешний источник",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "href": {
+          "description": "Ссылка",
+          "$ref": "#/$defs/Href"
+        },
+        "content": {
+          "description": "Текст, к которому относится ссылка и который будет особым образом выделен",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Text"
+          }
+        }
+      },
+      "required": [
+        "href",
+        "content"
+      ]
+    },
+    "LinkWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Link": {
+          "$ref": "#/$defs/Link"
+        }
+      },
+      "required": ["Link"]
+    },
+    "LocalHref": {
+      "description": "Ссылка на определённую часть этой книги",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Local": {
+          "description": "Идентификатор элемента, на который ссылаются",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Local"
+      ]
+    },
+    "Paragraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "content": {
+          "description": "Содержание абзаца",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Span"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "ParagraphWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Paragraph": {
+          "$ref": "#/$defs/Paragraph"
+        }
+      },
+      "required": ["Paragraph"]
+    },
+    "Poem": {
+      "description": "Произведение в стихотворной форме",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "title": {
+          "description": "Заголовок произведения",
+          "$ref": "#/$defs/Title"
+        },
+        "epigraphs": {
+          "description": "Фрагменты текста, помещённые перед началом произведения, после его названия",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Epigraph"
+          }
+        },
+        "authors": {
+          "description": "Список создателей стихотворного произведения",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Paragraph"
+          }
+        },
+        "content": {
+          "description": "Содержание произведения из нескольких частей",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PoemElement"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "PoemElement": {
+      "description": "Допустимая частица стихотворного произведения",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SubtitleWrapper"
+        },
+        {
+          "$ref": "#/$defs/StanzaWrapper"
+        }
+      ]
+    },
+    "PoemWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Poem": {
+          "$ref": "#/$defs/Poem"
+        }
+      },
+      "required": ["Poem"]
+    },
+    "RemoteHref": {
+      "description": "Ссылка на внешний источник",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Remote": {
+          "type": "string",
+          "format": "iri"
+        }
+      },
+      "required": [
+        "Remote"
+      ]
+    },
+    "Span": {
+      "description": "Допустимая частица текста",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FootnoteLinkWrapper"
+        },
+        {
+          "$ref": "#/$defs/LinkWrapper"
+        },
+        {
+          "$ref": "#/$defs/InlineImageWrapper"
+        },
+        {
+          "$ref": "#/$defs/TextWrapper"
+        }
+      ]
+    },
+    "Stanza": {
+      "description": "Строфа",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "Заголовок строфы",
+          "$ref": "#/$defs/Title"
+        },
+        "subtitle": {
+          "description": "Подзаголовок строфы",
+          "$ref": "#/$defs/Paragraph"
+        },
+        "content": {
+          "description": "Стихи",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Paragraph"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "StanzaWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Stanza": {
+          "$ref": "#/$defs/Stanza"
+        }
+      },
+      "required": ["Stanza"]
+    },
+    "SubtitleWrapper": {
+      "description": "Подзаголовок",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Subtitle": {
+          "$ref": "#/$defs/Paragraph"
+        }
+      },
+      "required": ["Subtitle"]
+    },
+    "Table": {
+      "description": "Таблица",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "header_column": {
+          "description": "Нужно ли отображать первый столбец как заглавный",
+          "type": "boolean"
+        },
+        "header_row": {
+          "description": "Нужно ли отобразить первый строку таблицы как заглавную",
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TableRow"
+          }
+        }
+      },
+      "required": [
+        "rows"
+      ]
+    },
+    "TableCell": {
+      "description": "Ячейка таблицы",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/Anchor"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Span"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "TableRow": {
+      "description": "Ряд таблицы",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TableCell"
+          }
+        }
+      },
+      "required": [
+        "cells"
+      ]
+    },
+    "TableWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Table": {
+          "$ref": "#/$defs/Table"
+        }
+      },
+      "required": ["Table"]
+    },
+    "Text": {
+      "description": "Часть текста с единообразным отображением",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "font_weight": {
+          "description": "Насыщенность шрифта",
+          "type": "number",
+          "enum": [100, 200, 300, 400, 500, 600, 700, 800, 900]
+        },
+        "font_style": {
+          "description": "Оформление текста",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FontStyle"
+          }
+        },
+        "decorations": {
+          "description": "Украшения текста",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TextDecoration"
+          }
+        },
+        "baseline_shift": {
+          "description": "Отобразить шрифта в виде нижнего или верхнего индекса",
+          "$ref": "#/$defs/BaselineShift"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "TextDecoration": {
+      "description": "Украшения текста",
+      "type": "string",
+      "enum": [
+        "LineThrough"
+      ]
+    },
+    "TextWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Text": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": ["Text"]
+    },
+    "Title": {
+      "description": "Заголовок чего-либо",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Содержание заголовка из нескольких частиц",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TitleElement"
+          }
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "TitleElement": {
+      "description": "Допустимая частица заголовка",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphWrapper"
+        },
+        {
+          "$ref": "#/$defs/EmptyLine"
+        }
+      ]
+    }
+  }
+}
