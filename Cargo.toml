@@ -15,6 +15,7 @@ edition = "2021"
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
+fb2 = { version = "0.4", optional = true }
 language-tags = { version = "0.3", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 url = { version = "2", features = ["serde"] }
@@ -22,4 +23,8 @@ uuid = { version = "1", features = ["serde", "v4"] }
 
 [dev-dependencies]
 boon = "0.5"
+quick-xml = { version = "0.30", features = ["serialize"] }
 serde_json = "1"
+
+[features]
+fb2 = ["dep:fb2"]

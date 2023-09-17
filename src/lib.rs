@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[cfg(feature = "fb2")]
+mod fb2;
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Book {
     pub id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,7 +31,7 @@ pub struct Book {
     pub chapters: Vec<Chapter>,
 }
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Default, PartialEq, Deserialize, Serialize)]
 pub struct Date {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iso_date: Option<NaiveDate>,
@@ -36,7 +39,7 @@ pub struct Date {
     pub display_date: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Author {
     pub id: Uuid,
     pub full_name: String,
@@ -48,21 +51,21 @@ pub struct Author {
     pub middle_name: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Footnotes {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<Title>,
     pub content: HashMap<String, Footnote>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Footnote {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<Title>,
     pub content: Vec<Content>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Chapter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
@@ -78,7 +81,7 @@ pub struct Chapter {
     pub sub_chapters: Vec<Chapter>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum Content {
     Paragraph(Paragraph),
     Poem(Poem),
@@ -89,14 +92,14 @@ pub enum Content {
     EmptyLine,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
     pub content: Vec<AnnotationElement>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum AnnotationElement {
     Paragraph(Paragraph),
     Poem(Poem),
@@ -106,7 +109,7 @@ pub enum AnnotationElement {
     EmptyLine,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Epigraph {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
@@ -115,7 +118,7 @@ pub struct Epigraph {
     pub content: Vec<EpigraphElement>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum EpigraphElement {
     Paragraph(Paragraph),
     Poem(Poem),
@@ -123,7 +126,7 @@ pub enum EpigraphElement {
     EmptyLine,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Poem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
@@ -137,13 +140,13 @@ pub struct Poem {
     pub content: Vec<PoemElement>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum PoemElement {
     Subtitle(Paragraph),
     Stanza(Stanza),
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Stanza {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<Title>,
@@ -154,7 +157,7 @@ pub struct Stanza {
     pub content: Vec<Paragraph>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Cite {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
@@ -164,7 +167,7 @@ pub struct Cite {
     pub content: Vec<CiteElement>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum CiteElement {
     Paragraph(Paragraph),
     Poem(Poem),
@@ -173,26 +176,26 @@ pub enum CiteElement {
     EmptyLine,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Title {
     pub content: Vec<TitleElement>,
 }
 
 // TODO: exclude images and other non-title items
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum TitleElement {
     Paragraph(Paragraph),
     EmptyLine,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Paragraph {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
     pub content: Vec<Span>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Table {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
@@ -201,19 +204,19 @@ pub struct Table {
     pub rows: Vec<TableRow>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct TableRow {
     pub cells: Vec<TableCell>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct TableCell {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub anchor: Option<String>,
     pub content: Vec<Span>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Image {
     pub id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -224,7 +227,7 @@ pub struct Image {
     pub title: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum Span {
     Footnote(FootnoteLink),
     Link(Link),
@@ -232,7 +235,7 @@ pub enum Span {
     Text(Text),
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct FootnoteLink {
     pub id: String,
     #[serde(rename = "type")]
@@ -240,19 +243,19 @@ pub struct FootnoteLink {
     pub content: Vec<Text>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum FootnoteKind {
     Note,
     Comment,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Link {
     pub href: Href,
     pub content: Vec<Text>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum Href {
     Remote(Url),
     Local(String),
@@ -267,14 +270,14 @@ impl AsRef<str> for Href {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct InlineImage {
     pub id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub alt: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Text {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub font_weight: Option<u16>,
