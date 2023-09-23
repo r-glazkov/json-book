@@ -12,7 +12,11 @@ use crate::{
 const BOLD_WEIGHT: u16 = 600;
 
 impl Book {
-    pub fn from_fb2(book: fb2::FictionBook, book_id: Uuid, binary_ids: &HashMap<String, Uuid>) -> Book {
+    pub fn from_fb2(
+        book: fb2::FictionBook,
+        book_id: Uuid,
+        binary_ids: &HashMap<String, Uuid>,
+    ) -> Book {
         let short_title = book.description.title_info.book_title.value;
         let date = book
             .description
@@ -554,7 +558,7 @@ impl Image {
         value
             .href
             .and_then(non_empty)
-            .and_then(|href| binary_ids.get(&href))
+            .and_then(|href| href.strip_prefix('#').and_then(|href| binary_ids.get(href)))
             .map(|id| Image {
                 id: id.clone(),
                 anchor: value.id,
@@ -801,7 +805,7 @@ impl InlineImage {
         image
             .href
             .and_then(non_empty)
-            .and_then(|href| binary_ids.get(&href))
+            .and_then(|href| href.strip_prefix('#').and_then(|href| binary_ids.get(href)))
             .map(|id| InlineImage {
                 id: id.clone(),
                 alt: image.alt,
