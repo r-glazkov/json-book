@@ -260,7 +260,7 @@
       "required": ["Cite"]
     },
     "Content": {
-      "description": "Допустимая частица содержание верхнего уровня главы, примечаний, комментариев...",
+      "description": "Допустимое содержание верхнего уровня главы, примечаний, комментариев...",
       "oneOf": [
         {
           "$ref": "#/$defs/ParagraphWrapper"
@@ -314,7 +314,7 @@
           "$ref": "#/$defs/Anchor"
         },
         "authors": {
-          "description": "Автор текста в эпиграфе",
+          "description": "Автор эпиграфа",
           "type": "array",
           "items": {
             "$ref": "#/$defs/Paragraph"
@@ -357,7 +357,7 @@
       ]
     },
     "Footnote": {
-      "description": "Сноски текста",
+      "description": "Сноска",
       "type": "object",
       "additionalProperties": false,
       "properties": {
